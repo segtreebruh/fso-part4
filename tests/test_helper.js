@@ -1,0 +1,65 @@
+const Blog = require('../models/blog');
+
+const initialBlogs = [
+  {
+    title: "Introduction to Node.js",
+    author: "Alice",
+    url: "https://example.com/nodejs",
+    likes: 44,
+    __v: 0,
+  },
+  {
+    title: "Mastering Express.js",
+    author: "Bob",
+    url: "https://example.com/express",
+    likes: 25,
+    __v: 0,
+  },
+  {
+    title: "Advanced MongoDB Techniques",
+    author: "Charlie",
+    url: "https://example.com/mongodb",
+    likes: 40,
+    __v: 0,
+  },
+  {
+    title: "Understanding Mongoose",
+    author: "Dana",
+    url: "https://example.com/mongoose",
+    likes: 17,
+    __v: 0,
+  },
+  {
+    title: "REST APIs with Express",
+    author: "Charlie",
+    url: "https://example.com/restapi",
+    likes: 34,
+    __v: 0,
+  },
+];
+
+const newBlog = {
+    title: "Go To Statement Considered Harmful",
+    author: "Edsger W. Dijkstra",
+    url: "https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf",
+    likes: 5,
+    __v: 0,
+  };
+
+const nonExistingId = async() => {
+  const blog = new Blog({ title: "garbage blog value "});
+  await blog.save();
+  await blog.deleteOne();
+
+  return blog.title.toString();
+}
+
+const blogsInDb = async() => {
+  const blogs = await Blog.find({});
+  
+  return blogs.map(blog => blog.toJSON());
+}
+
+module.exports = {
+  initialBlogs, newBlog, nonExistingId, blogsInDb
+};

@@ -13,3 +13,9 @@ Testing express servers, user administrations
 
 - Pretty easy, follow tutorial
 - Use hashmap for last two exercises
+
+## 4.8 - 4.12
+
+- Add cross-env & NODE_ENV to package file to separate production/development/test modes
+- Add separate url to mongodb testing in .env file
+- supertest will automatically connect to an ephemeral port if there is no connections
