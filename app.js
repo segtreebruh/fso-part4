@@ -21,8 +21,12 @@ mongoose.connect(config.MONGODB_URI)
 app.use(express.static("dist"));
 
 app.use(express.json());
+// app.use(middleware.requestLogger);
 
 // /api/blogs will automatically redirect to blogsRouter
 app.use("/api/blogs", blogsRouter);
+
+app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 module.exports = app;

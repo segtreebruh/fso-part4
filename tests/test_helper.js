@@ -52,7 +52,13 @@ const blogWithoutLikes = {
 }
 
 const nonExistingId = async() => {
-  const blog = new Blog({ title: "garbage blog value "});
+  const blog = new Blog({ 
+    title: "garbage blog value ", 
+    url: "https:///123456", 
+    author: "abcabcabc", 
+    likes: 1234
+  });
+
   await blog.save();
   await blog.deleteOne();
 
