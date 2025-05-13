@@ -19,3 +19,4 @@ Testing express servers, user administrations
 - Add cross-env & NODE_ENV to package file to separate production/development/test modes
 - Add separate url to mongodb testing in .env file
 - supertest will automatically connect to an ephemeral port if there is no connections
+- blogs.includes('') must exactly match the phrase

@@ -39,12 +39,17 @@ const initialBlogs = [
 ];
 
 const newBlog = {
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf",
-    likes: 5,
-    __v: 0,
-  };
+  title: "Go To Statement Considered Harmful",
+  author: "Edsger W. Dijkstra",
+  url: "https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf",
+  likes: 5
+};
+
+const blogWithoutLikes = {
+  title: "Shortest Path",
+  author: "Edsger W. Dijkstra",
+  url: "https://abc.xyz.def",
+}
 
 const nonExistingId = async() => {
   const blog = new Blog({ title: "garbage blog value "});
@@ -61,5 +66,5 @@ const blogsInDb = async() => {
 }
 
 module.exports = {
-  initialBlogs, newBlog, nonExistingId, blogsInDb
+  initialBlogs, newBlog, nonExistingId, blogsInDb, blogWithoutLikes
 };
