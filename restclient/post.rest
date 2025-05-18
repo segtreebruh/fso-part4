@@ -5,5 +5,16 @@ Content-Type: application/json
     "title": "test file ", 
     "author": "aaaaaaa", 
     "url": "fgh", 
-    "likes": 123
+    "likes": 123, 
+    "userId": "682a00051a1f2578f8c881eb"
+}
+
+### 
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "mluukkai",
+    "name": "Matti Luukkainen",
+    "password": "salainen"
 }

@@ -5,6 +5,14 @@ const blogSchema = new mongoose.Schema({
   author: String,
   url: String,
   likes: Number,
+
+  // create a reference to a User document 
+  // type: mongodb objectid, referencing to a document 
+  // in the 'User' collection
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 });
 
 blogSchema.set('toJSON', {

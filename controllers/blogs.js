@@ -1,10 +1,10 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
-const middleware = require("../utils/middleware");
+const User = require("../models/user");
 
 // will setup connection path in app.js
 blogsRouter.get("/", async (request, response, next) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1});
   response.json(blogs);
 });
 
@@ -15,10 +15,15 @@ blogsRouter.get("/:id", async (request, response, next) => {
   } catch (err) {
     next(err);
   }
-})
+});
 
 blogsRouter.post("/", async (request, response, next) => {
   const body = request.body;
+  const user = await User.findById(body.userId);
+
+  if (!user) {
+    return response.status(400).json({ error: "userId missing/invalid" });
+  }
 
   if (!body.title || !body.url) {
     return response.status(400).json({ error: "Title or URL missing " });
@@ -29,10 +34,15 @@ blogsRouter.post("/", async (request, response, next) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
+    user: user._id
   });
 
   try {
+    // save blogs to user.blogs
     const savedBlog = await blog.save();
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
+    
     response.status(201).json(savedBlog);
   } catch (exception) {
     next(exception);

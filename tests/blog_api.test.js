@@ -120,7 +120,7 @@ describe("when there is initially some blogs saved", async () => {
           .send(helper.blogWithoutLikes)
           .expect(201)
           .expect("Content-Type", /application\/json/);
-
+        
         const blogsAfterAdd = await helper.blogsInDb();
         assert.strictEqual(
           blogsAfterAdd.length,
