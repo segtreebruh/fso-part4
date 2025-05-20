@@ -22,7 +22,6 @@ Testing express servers, user administrations
   npm test -- --test-only
   ```
 
-
 ## 4.1 - 4.2
 
 - Reorganized files in part3 according to tutorial
@@ -61,4 +60,38 @@ const userSchema = mongoose.Schema({
   })
 ```
 
-However, do notice that if there is already violation in the database, **no new notes will be created**. So the database must be in a healthy state before any addition is being performed.
+  However, do notice that if there is already violation in the database, **no new notes will be created**. So the database must be in a healthy state before any addition is being performed.
+
+##
+
+- Testing JWT authorization with Restclient:
+  - Post to /api/login and get the token
+  - Add
+
+  ```rest
+  Authorization: Bearer {token}
+  ```
+
+  to Restclient below Content-Type
+
+- Problems with token-based authorization: 
+  - Once you have the token $\rightarrow$ unlimited access. How to revoke token access? 
+  - Two ways:
+    - 1: limit access to token
+
+    ```js
+    // controllers/login.js
+    const token = jwt.sign(userForToken, process.env.SECRET_KEY, { expiresIn: 60*60 });
+
+    // middleware.js
+    ... 
+    else if (error.name === 'TokenExpiredError') {
+      return response.status(401).json({
+        error: 'token expired'
+      })
+    }
+    ```
+
+    - 2: store token in database and check if it is still valid (session-based)
+  
+  - **WATCH**: - <https://www.youtube.com/watch?v=fyTxwIa-1U0> 

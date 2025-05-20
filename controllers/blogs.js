@@ -1,10 +1,22 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+
+const getTokenFrom = (request) => {
+  // authorization header
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization
+  // will show up in devtools: Network/Headers
+  const authorization = request.get("authorization");
+
+  if (authorization && authorization.startsWith("Bearer")) {
+    return authorization.replace("Bearer ", "");
+  }
+};
 
 // will setup connection path in app.js
 blogsRouter.get("/", async (request, response, next) => {
-  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1});
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
   response.json(blogs);
 });
 
@@ -19,7 +31,14 @@ blogsRouter.get("/:id", async (request, response, next) => {
 
 blogsRouter.post("/", async (request, response, next) => {
   const body = request.body;
-  const user = await User.findById(body.userId);
+  const decodedToken = jwt.verify(
+    getTokenFrom(request),
+    process.env.SECRET_KEY
+  );
+  if (!decodedToken.id)
+    return response.status(401).json({ error: "invalid token" });
+
+  const user = await User.findById(decodedToken.id);
 
   if (!user) {
     return response.status(400).json({ error: "userId missing/invalid" });
@@ -34,7 +53,7 @@ blogsRouter.post("/", async (request, response, next) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
-    user: user._id
+    user: user._id,
   });
 
   try {
@@ -42,7 +61,7 @@ blogsRouter.post("/", async (request, response, next) => {
     const savedBlog = await blog.save();
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
-    
+
     response.status(201).json(savedBlog);
   } catch (exception) {
     next(exception);
