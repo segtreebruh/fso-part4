@@ -10,7 +10,7 @@ usersRouter.get("/", async (request, response) => {
   return response.json(users);
 })
 
-usersRouter.post("/", async (request, response) => {
+usersRouter.post("/", async (request, response, next) => {
   const { username, name, password } = request.body;
 
   // https://github.com/kelektiv/node.bcrypt.js/#a-note-on-rounds 
@@ -23,8 +23,12 @@ usersRouter.post("/", async (request, response) => {
     passwordHash,
   });
 
-  const savedUser = await user.save();
-  response.status(201).json(savedUser);
+  try {
+    const savedUser = await user.save();
+    response.status(201).json(savedUser);
+  } catch (error) {
+    return next(error);
+  }
 });
 
 module.exports = usersRouter;

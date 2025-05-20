@@ -62,6 +62,8 @@ const userSchema = mongoose.Schema({
 
   However, do notice that if there is already violation in the database, **no new notes will be created**. So the database must be in a healthy state before any addition is being performed.
 
+- To pass test create duplicate username: wrap await User.save() into a try-catch block and use next(error) on catch
+
 ##
 
 - Testing JWT authorization with Restclient:
