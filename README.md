@@ -169,3 +169,22 @@ Testing express servers, user administrations
     }
   }
   ```
+
+- 4.21: populate will only generate valid blogs, so in user profile, the undeleted references to blogs will not show up even if it's not actually removed from the user profile. 
+
+  ```js
+  // controller/blogs.js
+  // ... 
+  
+  try {
+    // populate will only generate valid blogs
+    // so in /api/users, blogs will appear deleted in their profile but actually not 
+    await Blog.findByIdAndDelete(request.params.id);
+
+    // retain only blogs that have different id than those deleted
+    user.blogs = user.blogs.filter(b => b.toString() != request.params.id);
+    response.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+  ```
