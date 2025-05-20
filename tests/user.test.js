@@ -40,8 +40,10 @@ describe("when there is initially one user at db", () => {
     const usernames = usersAtEnd.map((u) => u.username);
     assert(usernames.includes(newUser.username));
   });
+});
 
-  test("creation fails with proper statuscode and message if username already taken", async () => {
+describe("Exercises", async() => {
+  test("4.16: username must be unique", async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
@@ -50,15 +52,29 @@ describe("when there is initially one user at db", () => {
       password: "salainen",
     };
 
-    const result = await api
-      .post("/api/users")
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
-
-    const usersAtEnd = await helper.usersInDb();
+    const result = await api.post("/api/users").send(newUser).expect(400);
     assert(result.body.error.includes("expected `username` to be unique"));
 
+    const usersAtEnd = await helper.usersInDb();
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
+  });
+
+  test("4.16: username and password must be at least 3 characters", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const invalidUser = {
+      username: "a",
+      password: "b",
+      name: "something",
+    };
+
+    const result = await api.post("/api/users").send(invalidUser).expect(400);
+    assert(
+      result.body.error.includes(
+        "Username and password must be at least 3 characters"
+      )
+    );
+    const usersAtEnd = await helper.usersInDb();
     assert.strictEqual(usersAtEnd.length, usersAtStart.length);
   });
 });

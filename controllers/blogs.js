@@ -1,18 +1,7 @@
 const blogsRouter = require("express").Router();
+const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const jwt = require("jsonwebtoken");
-
-const getTokenFrom = (request) => {
-  // authorization header
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization
-  // will show up in devtools: Network/Headers
-  const authorization = request.get("authorization");
-
-  if (authorization && authorization.startsWith("Bearer")) {
-    return authorization.replace("Bearer ", "");
-  }
-};
 
 // will setup connection path in app.js
 blogsRouter.get("/", async (request, response, next) => {
@@ -31,8 +20,9 @@ blogsRouter.get("/:id", async (request, response, next) => {
 
 blogsRouter.post("/", async (request, response, next) => {
   const body = request.body;
+  const token = request.token;
   const decodedToken = jwt.verify(
-    getTokenFrom(request),
+    token,
     process.env.SECRET_KEY
   );
   if (!decodedToken.id)
@@ -69,6 +59,25 @@ blogsRouter.post("/", async (request, response, next) => {
 });
 
 blogsRouter.delete("/:id", async (request, response, next) => {
+  const token = request.token;
+  try {
+    const decodedToken = jwt.verify(
+      token,
+      process.env.SECRET_KEY
+    );
+  } catch (error) {
+    return next(error);
+  }
+  
+  if (!decodedToken.id)
+    return response.status(401).json({ error: "invalid token" });
+
+  const user = await User.findById(decodedToken.id);
+
+  if (!user) {
+    return response.status(400).json({ error: "userId missing/invalid" });
+  }
+
   try {
     await Blog.findByIdAndDelete(request.params.id);
     response.status(204).end();

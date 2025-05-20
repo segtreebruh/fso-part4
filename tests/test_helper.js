@@ -84,5 +84,5 @@ module.exports = {
   nonExistingId,
   blogsInDb,
   blogWithoutLikes,
-  usersInDb
+  usersInDb,
 };

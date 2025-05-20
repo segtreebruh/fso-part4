@@ -13,6 +13,13 @@ usersRouter.get("/", async (request, response) => {
 usersRouter.post("/", async (request, response, next) => {
   const { username, name, password } = request.body;
 
+  if (username.length <= 3 || password.length <= 3) {
+    // call return here 
+    // or else will raise error: cannot set headers after sent to client
+    return response.status(400).json({
+      error: "Username and password must be at least 3 characters"
+    })
+  }
   // https://github.com/kelektiv/node.bcrypt.js/#a-note-on-rounds 
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
